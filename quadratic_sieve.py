@@ -3,12 +3,6 @@
 import math
 import sys
 
-if len(sys.argv) < 2:
-    print("Usage quadratic_sieve.py <N>")
-    sys.exit(1)
-
-N = int(sys.argv[1])
-
 #N = 64157244473449123  # 56 bit
 #N = 26408936706025597 # 55 bit
 #N = 12096819068999101 # 54 bit
@@ -19,6 +13,8 @@ N = int(sys.argv[1])
 #N = 84923
 #sqrt_N=math.ceil(math.sqrt(N))
 sqrt_N = 0
+
+sieving_array_size = 1000000
 
 # uncomment more if not founded
 primes = [
@@ -224,15 +220,10 @@ primes = [
     #9931, 9941, 9949 ,9967 ,9973
 ]
 
-sieving_array_size = 1000000
 
-
-def get_factor_base():
+def get_factor_base(N, primes):
     # return only values for which N is a quadratic residue
     return [prime for prime in primes if N ** ((prime - 1) // 2) % prime == 1]
-
-factor_base = get_factor_base()
-print("factor base: %s" % factor_base)
 
 
 def tonelli_shanks_algo(n, p):
@@ -282,7 +273,7 @@ def tonelli_shanks_algo(n, p):
     return R
 
 
-def is_smooth(n):
+def is_smooth(n, factor_base):
     if n == 0:
         return False
 
@@ -292,7 +283,7 @@ def is_smooth(n):
     return n == 1
 
 
-def gen_smooth():
+def gen_smooth(factor_base):
     ret = set({})
     startpoint = int(math.sqrt(N)) - sieving_array_size // 2
     endpoint = startpoint + sieving_array_size
@@ -304,7 +295,8 @@ def gen_smooth():
     #print(sieve)
 
     for factor in factor_base:
-        # tonelli shanks algo not works with factor 2
+        print(factor, factor_base)
+        # tonelli shanks algo doesn't work with factor 2
         if factor == 2:
             # solving x*x=N % 2
             if (sieve[0] % 2 == 0 and startpoint % 2 == 0 or
@@ -347,13 +339,14 @@ def gen_smooth():
                 if sieve[x] == 1 and x != 0:
                     ret.add(val)
                     number = (val + sqrt_N) * (val + sqrt_N) - N
-                    assert is_smooth(number)
+                    assert is_smooth(number, factor_base)
                     print(" + founded %d" % (len(ret)))
                     sieve[x] = 0
+                # print("for")
     return list(ret)
 
 
-def generate_vector(n):
+def generate_vector(n, factor_base):
     ret = []
     for factor in factor_base:
         times = 0
@@ -436,7 +429,9 @@ def find_linear_combination(vector_list):
     return combinations[-1]
 
 
-def get_y(x):
+def get_y(x, factor_base):
+    # actually, it computes integer square root of x, x must be smooth over
+    # the factor base, square root must exists
     y = 1
     for factor in factor_base:
         while x % (factor ** 2) == 0:
@@ -446,10 +441,11 @@ def get_y(x):
     return y
 
 
-def gen_dependent_subset(U):
+def gen_dependent_subset(U, factor_base):
     print(" = finding non-trivial linear combination from vectors generated "
           "from smooth array")
-    vector_list = [generate_vector((u + sqrt_N) * (u + sqrt_N) - N) for u in U]
+    vector_list = [generate_vector((u + sqrt_N) * (u + sqrt_N) - N,
+                                   factor_base) for u in U]
 
     linear_combination = find_linear_combination(vector_list)
 
@@ -460,14 +456,17 @@ def gen_dependent_subset(U):
 
 
 def factorize(N):
+    factor_base = get_factor_base(N, primes)
+    print("factor base: %s" % factor_base)
+
     print(" = generating smooth array")
-    U = gen_smooth()
+    U = gen_smooth(factor_base)
     print(U)
     #while len(U)>num:
     #  ret.remove(random.choice(ret))
 
     while True:
-        U_dep = gen_dependent_subset(U)
+        U_dep = gen_dependent_subset(U, factor_base)
         if not U_dep:
             print("  = bad luck")
             return 0, 0
@@ -481,7 +480,7 @@ def factorize(N):
         for u in U_dep:
             pre_y *= ((u + sqrt_N) * (u + sqrt_N) - N)
 
-        y = get_y(pre_y)
+        y = get_y(pre_y, factor_base)
 
         if x == y:
             print("bad dependency, removing %d from smooth array" % (U_dep[0]))
@@ -496,5 +495,12 @@ def factorize(N):
         print("bad dependency, removing %d from smooth array" % (U_dep[0]))
         U.remove(U_dep[0])
 
-f1, f2 = factorize(N)
-print("Answer: %d and %d" % (f1, f2))
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage quadratic_sieve.py <N>")
+        sys.exit(1)
+
+    N = int(sys.argv[1])
+
+    f1, f2 = factorize(N)
+    print("Answer: %d and %d" % (f1, f2))
