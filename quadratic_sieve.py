@@ -23,9 +23,9 @@ sqrt_N = 0
 # uncomment more if not founded
 primes = [
     2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
-   # 31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
-   # 73, 79, 83, 89, 97, 101, 103, 107, 109, 113,
-   # 127, 131, 137, 139, 149, 151, 157, 163, 167, 173,
+    31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
+    73, 79, 83, 89, 97, 101, 103, 107, 109, 113,
+   127, 131, 137, 139, 149, 151, 157, 163, 167, 173,
    # 179, 181, 191, 193, 197, 199, 211, 223, 227, 229,
    # 233, 239, 241, 251, 257, 263, 269, 271, 277, 281,
    # 283, 293, 307, 311, 313, 317, 331, 337, 347, 349,
@@ -232,7 +232,7 @@ def get_factor_base():
     return [prime for prime in primes if N ** ((prime - 1) // 2) % prime == 1]
 
 factor_base = get_factor_base()
-print(factor_base)
+print("factor base: %s" % factor_base)
 
 
 def tonelli_shanks_algo(n, p):
@@ -299,7 +299,7 @@ def gen_smooth():
 
     print(" = initializing an array for quadratic sieving")
     sieve = [(x + sqrt_N) * (x + sqrt_N) - N
-                 for x in range(startpoint, endpoint)]
+             for x in range(startpoint, endpoint)]
 
     #print(sieve)
 
@@ -308,7 +308,7 @@ def gen_smooth():
         if factor == 2:
             # solving x*x=N % 2
             if (sieve[0] % 2 == 0 and startpoint % 2 == 0 or
-                sieve[0] % 2 == 1 and startpoint % 2 == 1):
+               sieve[0] % 2 == 1 and startpoint % 2 == 1):
                     R_all = [0]
             else:
                 R_all = [1]
@@ -391,6 +391,10 @@ def find_linear_combination(vector_list):
         return None
 
     width = len(vector_list[0])
+    if height < width:
+        print("failed, insufficient matrix rows. Try to uncomment more primes "
+              "in source")
+        return None
 
     # for each string: what has been multiplied
     combinations = [[0] * height for y in range(height)]
@@ -436,14 +440,15 @@ def get_y(x):
     y = 1
     for factor in factor_base:
         while x % (factor ** 2) == 0:
-            #print("factor found: %d"%factor)
+            #print("factor found: %d" % factor)
             x = x // (factor ** 2)
             y *= factor
     return y
 
 
 def gen_dependent_subset(U):
-    print(" = finding non-trivial linear combination from vectors generated from smooth array")
+    print(" = finding non-trivial linear combination from vectors generated "
+          "from smooth array")
     vector_list = [generate_vector((u + sqrt_N) * (u + sqrt_N) - N) for u in U]
 
     linear_combination = find_linear_combination(vector_list)
@@ -466,7 +471,7 @@ def factorize(N):
         if not U_dep:
             print("  = bad luck")
             return 0, 0
-        print(U_dep)
+        print("dependent subset %s" % U_dep)
 
         x = 1
         for u in U_dep:
@@ -484,7 +489,8 @@ def factorize(N):
             continue
 
         f1, f2 = gcd(x + y, N), gcd(x - y, N)
-        print("finished dependency: x=%d, y=%d factors: %d and %d" % (x, y, f1, f2))
+        print("finished dependency: x=%d, y=%d factors: %d and %d" % (
+            x, y, f1, f2))
         if f1 != N and f1 != 1 and f2 != N and f2 != 1:
             return f1, f2
         print("bad dependency, removing %d from smooth array" % (U_dep[0]))
