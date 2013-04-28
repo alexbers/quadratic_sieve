@@ -1,7 +1,7 @@
 # Simple quadratic sieve algo #
 
 Written just for educational purposes. If you need performance, choose
-anything else. Versions on C has very sophisticated code.
+anything else. This version is written to understand how it works.
 
 You have to tune primes and sieving_array_size before lauching.
 
