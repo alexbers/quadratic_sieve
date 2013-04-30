@@ -284,9 +284,8 @@ def gen_smooth(factor_base):
         # tonelli shanks algo doesn't work with factor 2
         if factor == 2:
             # solving x*x=N % 2
-            if (sieve[0] % 2 == 0 and startpoint % 2 == 0 or
-               sieve[0] % 2 == 1 and startpoint % 2 == 1):
-                    R_all = [0]
+            if (sqrt_N ** 2 - N) % 2 == 0:
+                R_all = [0]
             else:
                 R_all = [1]
         else:
