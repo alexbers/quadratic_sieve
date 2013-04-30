@@ -6,6 +6,8 @@ import sys
 
 # generation of new number: openssl genrsa <bits> | openssl rsa -modulus -noout
 
+#N = 533595842543374012417  # 69 bit
+#N = 200903802201060018373  # 68 bit
 #N = 93496418013679648963  # 67 bit
 #N = 54570430399383971173  # 66 bit
 #N = 27419891463310753159  # 65 bit
