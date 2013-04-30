@@ -280,7 +280,6 @@ def gen_smooth(factor_base):
     #print(sieve)
 
     for factor in factor_base:
-        print(factor, factor_base)
         # tonelli shanks algo doesn't work with factor 2
         if factor == 2:
             # solving x*x=N % 2
@@ -485,6 +484,5 @@ if __name__ == "__main__":
         sys.exit(1)
 
     N = int(sys.argv[1])
-
     f1, f2 = factorize(N)
     print("Answer: %d and %d" % (f1, f2))
