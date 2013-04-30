@@ -266,7 +266,7 @@ def is_smooth(n, factor_base):
     return n == 1
 
 
-def gen_smooth(factor_base):
+def gen_smooth(factor_base, max_num):
     ret = set({})
     startpoint = int(math.sqrt(N)) - sieving_array_size // 2
     endpoint = startpoint + sieving_array_size
@@ -322,6 +322,8 @@ def gen_smooth(factor_base):
                     assert is_smooth(number, factor_base)
                     print(" + founded %d" % (len(ret)))
                     sieve[x] = 0
+                    if len(ret) > max_num:
+                        return list(ret)
     return list(ret)
 
 
@@ -364,6 +366,7 @@ def find_linear_combination(vector_list):
 
     width = len(vector_list[0])
     if height < width:
+        print(height, width, len(primes))
         print("failed, insufficient matrix rows. Try to uncomment more primes "
               "in source")
         return None
@@ -438,7 +441,10 @@ def factorize(N):
     print("factor base: %s" % factor_base)
 
     print(" = generating smooth array")
-    U = gen_smooth(factor_base)
+    U = gen_smooth(factor_base, len(factor_base) + 20)
+    # 20 is for good chance to find a non-trivial factors, probabliliy
+    # of not finding ~ (1/3) ^ 20
+
     print(U)
     #while len(U)>num:
     #  ret.remove(random.choice(ret))
