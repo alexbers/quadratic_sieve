@@ -25,8 +25,6 @@ import sys
 #N = 851821581119671  # 50 bit
 #N = 832730084101
 #N = 84923
-#sqrt_N=math.ceil(math.sqrt(N))
-sqrt_N = 0
 
 sieving_array_size = 1000000
 
@@ -274,8 +272,7 @@ def gen_smooth(factor_base):
     endpoint = startpoint + sieving_array_size
 
     print(" = initializing an array for quadratic sieving")
-    sieve = [(x + sqrt_N) * (x + sqrt_N) - N
-             for x in range(startpoint, endpoint)]
+    sieve = [x * x - N for x in range(startpoint, endpoint)]
 
     #print(sieve)
 
@@ -283,15 +280,15 @@ def gen_smooth(factor_base):
         # tonelli shanks algo doesn't work with factor 2
         if factor == 2:
             # solving x*x=N % 2
-            if (sqrt_N ** 2 - N) % 2 == 0:
-                R_all = [0]
+            if N % 2 == 0:
+                    R_all = [0]
             else:
                 R_all = [1]
         else:
             # sqrt_N
             R = tonelli_shanks_algo(N, factor)
             assert R != 0
-            R_all = [R - sqrt_N, factor - R - sqrt_N]
+            R_all = [R, factor - R]
 
         print(" = factor %d, R_all=%s" % (factor, R_all))
 
@@ -321,7 +318,7 @@ def gen_smooth(factor_base):
 
                 if sieve[x] == 1 and x != 0:
                     ret.add(val)
-                    number = (val + sqrt_N) * (val + sqrt_N) - N
+                    number = val * val - N
                     assert is_smooth(number, factor_base)
                     print(" + founded %d" % (len(ret)))
                     sieve[x] = 0
@@ -426,8 +423,7 @@ def get_y(x, factor_base):
 def gen_dependent_subset(U, factor_base):
     print(" = finding non-trivial linear combination from vectors generated "
           "from smooth array")
-    vector_list = [generate_vector((u + sqrt_N) * (u + sqrt_N) - N,
-                                   factor_base) for u in U]
+    vector_list = [generate_vector(u * u - N, factor_base) for u in U]
 
     linear_combination = find_linear_combination(vector_list)
 
@@ -460,7 +456,7 @@ def factorize(N):
 
         pre_y = 1
         for u in U_dep:
-            pre_y *= ((u + sqrt_N) * (u + sqrt_N) - N)
+            pre_y *= u * u - N
 
         y = get_y(pre_y, factor_base)
 
