@@ -303,6 +303,10 @@ def gcd(x, y):
     return y
 
 
+def identity_matrix(height):
+    return [[1 if i == j else 0 for j in range(height)] for i in range(height)]
+
+
 def find_linear_combination(vector_list):
     height = len(vector_list)
     if height == 0:
@@ -316,9 +320,7 @@ def find_linear_combination(vector_list):
         return None
 
     # for each string: what has been multiplied
-    combinations = [[0] * height for y in range(height)]
-    for i in range(height):
-        combinations[i][i] = 1
+    combinations = identity_matrix(height)
 
     for offset in range(width):
         if vector_list[offset][offset] == 0:
