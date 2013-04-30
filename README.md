@@ -10,8 +10,8 @@ Using of pypy interpreter is strongly recomended.
 
 # Timing on pypy #
 
-Answer: 7192461209 and 12999224507
+Answer: 1819935140393 and 1001338283189
 
-real    0m3.008s
-user    0m2.929s
-sys     0m0.071s
+real    0m10.255s
+user    0m10.154s
+sys     0m0.082s
